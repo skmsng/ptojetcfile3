@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STEP 11 - RSSリーダー(ウィジェット版)</string>
+    <string name="message_loading">読み込み中..</string>
+    <string name="label_refresh">更新</string>
+    <string name="message_error">指定したファイルが読み取れませんでした。</string>
+    <string name="widget_name">STEP 11 - RSSリーダー</string>
+
+</resources>

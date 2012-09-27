@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="match_parent"
+  android:orientation="horizontal" android:layout_gravity="center_horizontal">
+  <Button android:id="@+id/button10" android:text="A"
+    android:layout_width="45dp" android:layout_height="97dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button8" android:text="E"
+    android:layout_width="45dp" android:layout_height="117dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button6" android:text="C"
+    android:layout_width="45dp" android:layout_height="145dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button4" android:text="G"
+    android:layout_width="45dp" android:layout_height="181dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button2" android:text="D"
+    android:layout_width="45dp" android:layout_height="225dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button1" android:text="C"
+    android:layout_width="45dp" android:layout_height="250dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button3" android:text="E"
+    android:layout_width="45dp" android:layout_height="202dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button5" android:text="A"
+    android:layout_width="45dp" android:layout_height="162dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button7" android:text="D"
+    android:layout_width="45dp" android:layout_height="130dp" 
+    android:gravity="top"/>
+  <Button android:id="@+id/button9" android:text="G"
+    android:layout_width="45dp" android:layout_height="106dp" 
+    android:gravity="top"/>
+</LinearLayout>

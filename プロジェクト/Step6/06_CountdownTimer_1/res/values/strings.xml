@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, CountdownTimerActivity!</string>
+    <string name="app_name">Step 6 キッチンタイマー</string>
+    <string name="label_start">スタート</string>
+    <string name="label_stop">ストップ</string>
+    <string name="label_settings">アラーム設定</string>
+
+</resources>

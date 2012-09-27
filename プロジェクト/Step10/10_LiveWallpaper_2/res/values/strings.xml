@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World!</string>
+    <string name="app_name">STEP 10 - スライドショーライブ壁紙</string>
+    <string name="description">画像をライブ壁紙として表示します。</string>
+    <string name="author">hiro</string>
+
+</resources>

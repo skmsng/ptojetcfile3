@@ -1,0 +1,226 @@
+●画像ダウンローダーアプリのプログラム修正について(2012年7月6日更新)
+
+STEP7の画像ダウンローダーアプリ作成時にBing Search APIのアプリケーションIDを取得した方にはMicrosoftから連絡があったと思いますが、8月1日以降はBing API 2.0が使用できなくなります。今後はWindows Azure Marketplaceで申し込み可能なBing Search APIを使用することになります。Bing Search APIは有料ですが、月間5,000回まで検索できる無料のオプションが用意されているので、こちらを使用するといいでしょう。
+
+
+・Bing Search APIにサインアップする
+
+Windows Azure MarketplaceでBing Search APIの使用を申し込むには、「https://datamarket.azure.com/」にアクセスしてWindows Live IDでログインし、Windows Azure Marketplaceアカウントを作成します。これでBing Search APIにサインアップできるようになります。トップページにBing Search APIへのリンクが表示されていない場合、ページ内の検索ボックスに「Bing Search API」と入力して検索するといいでしょう。なお、作成するアプリがBing Search APIに接続した際に認証に使用するのが「アカウントキー」です。アカウントキーは自動で作成されるものをそのまま使用することもできますが、アカウントキーを追加してアプリごとに使い分けることをお勧めします。
+
+
+●ソースコードを修正する
+
+Bing Search APIの申し込みが完了し、アカウントキーが取得できたら、アプリを修正していきます。修正点としては、APIの変更に伴うURLの変更と認証機能の追加、JSONの内容に合わせた修正の3つとなります。Bing API 2.0では多くのWeb APIと同様にAPIキーをクエリ文字列に含めることで認証を行っていましたが、新しいBing Search APIではHTTPリクエストによるベーシック認証を行います。なお、修正が必要になるのは「PhotoDownloaderActivity.java」のみです。
+
+
+
+
+○リクエストURLの変更とアカウントキーによる認証設定の追加
+
+
+はじめにインポート宣言を追加して、URLを変更しましょう。また、変数「accountKey」を作成し、認証で使うアカウントキーを格納します。PasswordAuthentication」クラスではパスワードをchar型の配列として指定するので、ここで「toCharArray」メソッドを使用して文字列からchar[]に変換しておきます。
+
+
+・インポート宣言の追加
+
+リスト9に追加するインポート宣言
+------------------------------------------------------------------------------
+
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+
+------------------------------------------------------------------------------
+
+
+・リクエストURLの変更とアカウントキーの追加
+
+リスト10修正部分(クラスボディ)
+
+修正前
+------------------------------------------------------------------------------
+
+static  String strUrl=
+	"http://api.bing.net/json.aspx?AppId=<App ID>&Version=2.2&Sources=image";
+
+------------------------------------------------------------------------------
+
+修正後
+------------------------------------------------------------------------------
+
+static  String strUrl=
+	"https://api.datamarket.azure.com/Bing/Search/Image?$format=json&$top=10";
+char[] accountKey="<アカウントキー>".toCharArray();
+
+------------------------------------------------------------------------------
+
+p186リスト10の3～4行目の内容を修正後の内容に置き換えます。「$top」で指定する数値は検索件数です。デフォルトでは最大値の50件が指定されています。「<アカウントキー>」には自分のアカウントキーを入力しておきましょう
+
+
+
+
+・認証機能の追加
+
+リスト11追加部分(onCreateメソッド)
+------------------------------------------------------------------------------
+Authenticator.setDefault(
+	new Authenticator() {
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication("", accountKey);
+		}
+	}
+);
+------------------------------------------------------------------------------
+
+リストの内容をonCreateメソッドの最後に追加します。「PasswordAuthentication」の引数は(<ユーザー名>,<パスワード>)のようになっていますが、ここではユーザー名を使用しないので1つ目の引数に空の文字列「""」を指定し、パスワードとしてアカウントキーを格納した「accountKey」を指定します。
+
+
+
+・クエリ文字列の修正
+
+リスト12修正部分(doSearchメソッド)
+
+修正前
+------------------------------------------------------------------------------
+
+url=new URL(strUrl+"&Query="+q);
+
+------------------------------------------------------------------------------
+
+修正後
+------------------------------------------------------------------------------
+
+url=new URL(strUrl+"&Query='"+q+"'");
+
+------------------------------------------------------------------------------
+
+新しいBing Search APIでは検索語句を引用符で囲む必要があるため、リスト12の9行目を修正します
+
+
+
+
+○JSONデータの内容変更に合わせてコードを修正する
+
+
+Bing API 2.0と新しいBing Search APIでは、リストのようにJSONデータの構造が異なります。Bing API 2.0では「SearchResponse」オブジェクト内の「Image」オブジェクトに配列「Results」として検索結果が格納されていたのに対し、Bing Search APIでは「d」オブジェクト直下に配列「results」として検索結果が格納されています。また、サムネイル画像のURLを格納する値の名前が「Url」から「MediaUrl」に変更されています。
+
+
+(旧)Bing API 2.0が出力するJSONデータの構造
+------------------------------------------------------------
+
+{
+    "SearchResponse":{
+	...
+        "Image":{
+            "Results":[
+                {
+                    Title:タイトル
+                    MediaUrl:画像のURL            {
+                    ...
+                    Thumbnail:{
+                        "Url":サムネイル画像のURL
+                        ...
+                    }
+                },
+                ...
+            ]
+        }
+    }
+}
+
+------------------------------------------------------------
+
+
+(新)Bing Search APIで画像を検索したときのJSONデータの構造
+------------------------------------------------------------
+
+{
+    "d":{
+        "results":[
+            {
+                ...
+                Title:タイトル
+                MediaUrl:画像のURL,
+                Thumbnail:{
+                    ...
+                    MediaUrl:サムネイル画像のURL
+                    ...
+                }
+            },
+            ...
+        ]
+    }
+}
+
+------------------------------------------------------------
+
+
+
+
+・JSONオブジェクトの内容に合わせてコードを修正する
+
+
+リスト15修正(jsonTaskクラスのonPostExecuteメソッド)
+------------------------------------------------------------------------------
+if(result!=null){
+
+	try {
+		JSONObject jo=new JSONObject(result).
+			getJSONObject("d");// ←――――――――――――――――――――変更
+		JSONArray jsonArray=null;
+		jsonArray=jo.getJSONArray("results");// ←―――――――――――――――変更
+
+		objects = new Object[jsonArray.length()];
+		URL[] thumbUrls=new URL[jsonArray.length()];
+
+		for(int i=0;i<jsonArray.length();i++){
+			objects[i]=jsonArray.getJSONObject(i);
+			thumbUrls[i]=new URL(((JSONObject)objects[i]).
+				getJSONObject("Thumbnail").getString("MediaUrl"));// ← 変更
+		}
+
+		new getThumbTask().execute(thumbUrls);
+
+	} catch (JSONException e1) {
+		e1.printStackTrace();
+	} catch (MalformedURLException e) {
+		e.printStackTrace();
+	}
+}
+
+------------------------------------------------------------------------------
+188ページ、リスト15の4、7、15行目をリストに従って修正します。ここまでの修正を行うことで、新しいBing Search APIで検索が可能となります
+
+
+
+
+○その他の修正
+
+Bing Search APIとは無関係ですが、非推奨のメソッドを使用している部分があったので、修正手順を紹介します。
+
+リスト18の修正(getThumbTaskクラスのonPostExecuteメソッド)
+------------------------------------------------------------------------------
+final ThumbnailAdapter adapter=new ThumbnailAdapter(mContext, objects, result);
+GridView lv=(GridView)findViewById(android.R.id.list);
+lv.setAdapter(adapter);
+lv.setOnItemClickListener(new OnItemClickListener() {
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+		try {
+			Uri downloadUri = Uri.parse(
+					((JSONObject)adapter.getItem(position)).getString("MediaUrl"));
+			DownloadManager dm=(DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+			DownloadManager.Request dr=new DownloadManager.Request(downloadUri);
+			String fn=URLDecoder.decode(downloadUri.getLastPathSegment(),"UTF-8");// ←――変更
+			dr.setDestinationInExternalPublicDir(
+					Environment.DIRECTORY_DOWNLOADS, fn);
+			dm.enqueue(dr);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {// ←――――――――――――――――――――追加
+			e.printStackTrace();// ←―――――――――――――――――――――――――――追加
+		}
+	}
+});
+
+------------------------------------------------------------------------------
+190ページ、リスト18の13行目にある「URLDecoder.decode」メソッドに引数を追加します。あとは外側の「try」ブロックに「UnsupportedEncodingException」エラーに対応した「catch」ブロックを追加すれば修正完了です
+

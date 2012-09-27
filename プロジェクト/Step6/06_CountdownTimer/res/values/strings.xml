@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Step 6 - キッチンタイマー</string>
+    <string name="label_start">スタート</string>
+    <string name="label_stop">ストップ</string>
+    <string name="label_settings">アラーム設定</string>
+    <string name="message_timeup">時間です。</string>
+    <string name="label_ok">OK</string>
+    <string name="key_ringtone">alarm</string>
+    <string name="label_ringtone">アラーム音</string>
+    <string name="key_vibrator">vibrator</string>
+    <string name="label_vibrator">バイブレーター</string>
+
+</resources>

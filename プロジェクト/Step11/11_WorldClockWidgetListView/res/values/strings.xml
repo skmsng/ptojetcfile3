@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STEP 11 - 世界時計</string>
+    <string name="hint_query">タイムゾーンを入力</string>
+    <string name="local_time">ローカルタイム</string>
+    
+    <string name="label_change">変更</string>
+    <string name="label_delete">削除</string><string name="label_timezone">タイムゾーン</string>
+
+</resources>
